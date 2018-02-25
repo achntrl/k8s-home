@@ -38,7 +38,8 @@ metadata:
   name: influxdb-pv-claim
 spec:
   accessModes:
-    - ReadWriteOnce
+  - ReadWriteOnce
+  storageClassName: standard
   resources:
     requests:
       storage: 1Gi
