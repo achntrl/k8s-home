@@ -2,15 +2,15 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name:  pdf-merge-service
+  name: pdf-merge-service
 spec:
   selector:
-    app:  pdf-merge
-  type:  LoadBalancer
+    app: pdf-merge
+  type: LoadBalancer
   ports:
   - protocol: "TCP"
-    port:  5000
-    targetPort:  5000
+    port: 5000
+    targetPort: 5000
     nodePort: 30001
 
 
