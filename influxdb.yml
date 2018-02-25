@@ -4,9 +4,11 @@ kind: Service
 metadata:
   name: influxdb
 spec:
+  type: NodePort
   ports:
   - port: 8086
     targetPort: 8086
+    nodePort: 30002
   selector:
     app: influxdb
 ---
@@ -24,6 +26,8 @@ spec:
       containers:
       - name: influxdb
         image: arm32v7/influxdb
+        ports:
+        - containerPort: 8086
         volumeMounts:
         - mountPath: /data
           name: influxdb-storage
@@ -38,7 +42,7 @@ metadata:
   name: influxdb-pv-claim
 spec:
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   storageClassName: standard
   resources:
     requests:
