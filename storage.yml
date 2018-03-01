@@ -11,4 +11,4 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: 192.168.0.25
-    path: "/volume1/k8-cluster-storage"
+    path: "/volume1/k8-cluster-storage/postgres"
