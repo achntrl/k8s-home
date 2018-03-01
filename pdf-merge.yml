@@ -6,7 +6,7 @@ metadata:
 spec:
   selector:
     app: pdf-merge
-  type: LoadBalancer
+  type: NodePort
   ports:
   - protocol: "TCP"
     port: 5000
