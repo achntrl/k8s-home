@@ -1,0 +1,7 @@
+# General OS and IDE things
+.DS_Store
+.vscode/
+
+# Catch all for secret definitions
+**/secret.yml
+**/secrets.yml
