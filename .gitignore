@@ -5,3 +5,4 @@
 # Catch all for secret definitions
 **/secret.yml
 **/secrets.yml
+**/auth

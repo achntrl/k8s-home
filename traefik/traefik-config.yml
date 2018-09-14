@@ -1,0 +1,37 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: traefik-config
+  namespace: kube-system
+data:
+  traefik.toml: |+
+    #logLevel = "DEBUG"
+
+    defaultEntryPoints = ["http", "https"]
+
+    # Web interface of Traefik
+    [web]
+    address = ":8081"
+
+    # Enable Kubernetes ingress integration
+    [kubernetes]
+
+    # Force HTTPS
+    [entryPoints]
+      [entryPoints.http]
+      address = ":80"
+        [entryPoints.http.redirect]
+        entryPoint = "https"
+      [entryPoints.https]
+      address = ":443"
+        [entryPoints.https.tls]
+
+    # Let's encrypt configuration
+    [acme]
+      email="alexandre.chaintreuil@gmail.com"
+      storage="/etc/traefik/acme.json"
+      entryPoint="https"
+      acmeLogging=true
+      onDemand=true
+      onHostRule=true
+      dnsProvider="cloudflare"
