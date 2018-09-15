@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: pdf-merge-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    # ingress.kubernetes.io/auth-type: "basic"
+    # ingress.kubernetes.io/auth-secret: "traefik-dashboard-auth"
+spec:
+  rules:
+  - host: pdf-merge.home.achntrl.com
+    http:
+      paths:
+      - backend:
+          serviceName: pdf-merge-service
+          servicePort: 5000

@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: pdf-merge
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: pdf-merge
+    spec:
+      containers:
+      - name: pdf-merge
+        image: achntrl/arm-pdf-merge:0.1
+        ports:
+        - containerPort: 5000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: pdf-merge-service
+spec:
+  selector:
+    app: pdf-merge
+  ports:
+  - protocol: "TCP"
+    port: 5000
+    targetPort: 5000
