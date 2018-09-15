@@ -7,8 +7,8 @@ spec:
   selector:
     k8s-app: traefik-ingress-lb
   ports:
-  - port: 8081
-    targetPort: 8081
+  - port: 8080
+    targetPort: 8080
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -21,9 +21,9 @@ metadata:
     ingress.kubernetes.io/auth-secret: "traefik-dashboard-auth"
 spec:
   rules:
-  - host: traefik-v2.home.achntrl.com
+  - host: traefik-dashboard.home.achntrl.com
     http:
       paths:
       - backend:
           serviceName: traefik-dashboard
-          servicePort: 8081
+          servicePort: 8080

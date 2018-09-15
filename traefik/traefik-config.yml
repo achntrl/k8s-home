@@ -5,13 +5,13 @@ metadata:
   namespace: kube-system
 data:
   traefik.toml: |+
-    #logLevel = "DEBUG"
-
     defaultEntryPoints = ["http", "https"]
 
     # Web interface of Traefik
     [web]
-    address = ":8081"
+    address = ":8080"
+
+    [accessLog]
 
     # Enable Kubernetes ingress integration
     [kubernetes]
