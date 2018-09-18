@@ -34,11 +34,12 @@ spec:
         app: datadog-agent
       name: datadog-agent
     spec:
+      serviceAccountName: datadog-agent
       tolerations:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
       containers:
-      - image: achntrl/dd-agent:6.5.1
+      - image: achntrl/dd-agent:6.5.1v2
         imagePullPolicy: Always
         name: datadog-agent
         ports:
@@ -63,6 +64,10 @@ spec:
             value: "true"
           - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
             value: "true"
+          - name: DD_PROCESS_AGENT_ENABLED
+            value: "true"
+          - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
+            value: 'true'
           - name: DD_KUBERNETES_KUBELET_HOST
             valueFrom:
               fieldRef:
@@ -96,6 +101,9 @@ spec:
           - name: datadog-config-volume
             mountPath: /etc/datadog-agent/conf.d/kubelet.d/conf.yaml
             subPath: kubelet.yaml
+          - name: passwd
+            mountPath: /etc/passwd
+            readOnly: true
         livenessProbe:
           exec:
             command:
@@ -121,3 +129,6 @@ spec:
         - configMap:
             name: datadog-config
           name: datadog-config-volume
+        - hostPath:
+            path: /etc/passwd
+          name: passwd
