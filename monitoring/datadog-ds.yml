@@ -6,6 +6,7 @@ data:
   datadog.yaml: |
     listeners:
     - name: kubelet
+    - name: docker
     config_providers:
     - name: kubelet
       polling: true
@@ -13,20 +14,38 @@ data:
   kubelet.yaml: |
     init_config:
     instances:
-    - {}
+    - enable_kubelet_checks: true
   apiserver.yaml: |
     init_configs:
     instances:
     - {}
+  # This doesn't seem to work
+  prometheus.yaml: |
+    init_configs:
+    instances:
+    - prometheus_url: "http://kube-state-metrics.kube-system:8080/metrics"
+      namespace: "kube-system"
+      metrics:
+        - kube*
   docker.yaml: |
     init_config:
     instances:
-    - {}
+    - url: "unix://var/run/docker.sock"
+      new_tag_names: true
+  # This doesn't seem to work
+  traefik.yaml: |
+    init_config:
+    instances:
+      - host: "traefik-dashboard.kube-system"
+        port: "8080"
+        path: "/health"
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: datadog-agent
+  annotations:
+    ad.datadoghq.com/datadog-agent.logs: '[{"service":"agent","source":"kubernetes"}]'
 spec:
   template:
     metadata:
@@ -39,7 +58,7 @@ spec:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
       containers:
-      - image: achntrl/dd-agent:6.5.1v2
+      - image: achntrl/dd-agent:6.5.2
         imagePullPolicy: Always
         name: datadog-agent
         ports:
@@ -95,6 +114,15 @@ spec:
           - name: datadog-config-volume
             mountPath: /etc/datadog-agent/datadog.yaml
             subPath: datadog.yaml
+          - name: datadog-config-volume
+            mountPath: /etc/datadog-agent/conf.d/traefik.yaml
+            subPath: traefik.yaml
+          - name: datadog-config-volume
+            mountPath: /etc/datadog-agent/conf.d/docker.yaml
+            subPath: docker.yaml
+          - name: datadog-config-volume
+            mountPath: /etc/datadog-agent/conf.d/prometheus.d/conf.yaml
+            subPath: prometheus.yaml
           - name: datadog-config-volume
             mountPath: /etc/datadog-agent/conf.d/kubernetes_apiserver.d/conf.yaml
             subPath: apiserver.yaml
