@@ -10,6 +10,8 @@ apiVersion: extensions/v1beta1
 metadata:
   name: traefik-ingress-controller
   namespace: kube-system
+  annotations:
+    ad.datadoghq.com/traefik-ingress-lb.logs: '[{"service":"traefik","source":"traefik"}]'
   labels:
     k8s-app: traefik-ingress-lb
 spec:
@@ -23,6 +25,15 @@ spec:
         k8s-app: traefik-ingress-lb
         name: traefik-ingress-lb
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - k8s-slave-3
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
       containers:

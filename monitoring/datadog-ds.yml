@@ -25,8 +25,7 @@ data:
     instances:
     - prometheus_url: "http://kube-state-metrics.kube-system:8080/metrics"
       namespace: "kube-system"
-      metrics:
-        - kube*
+      metrics: ["*"]
   docker.yaml: |
     init_config:
     instances:
@@ -39,13 +38,19 @@ data:
       - host: "traefik-dashboard.kube-system"
         port: "8080"
         path: "/health"
+  disk.yaml: |
+    init_config:
+    instances:
+    - use_mount: false
+      excluded_filesystems:
+        - tmpfs
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: datadog-agent
   annotations:
-    ad.datadoghq.com/datadog-agent.logs: '[{"service":"agent","source":"kubernetes"}]'
+    ad.datadoghq.com/datadog-agent.logs: '[{"service":"agent","source":"agent"}]'
 spec:
   template:
     metadata:
@@ -58,7 +63,7 @@ spec:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
       containers:
-      - image: achntrl/dd-agent:6.5.2
+      - image: achntrl/dd-agent:6.5.2v4
         imagePullPolicy: Always
         name: datadog-agent
         ports:
@@ -129,15 +134,12 @@ spec:
           - name: datadog-config-volume
             mountPath: /etc/datadog-agent/conf.d/kubelet.d/conf.yaml
             subPath: kubelet.yaml
+          - name: datadog-config-volume
+            mountPath: /etc/datadog-agent/conf.d/disk.d/conf.yaml
+            subPath: disk.yaml
           - name: passwd
             mountPath: /etc/passwd
             readOnly: true
-        livenessProbe:
-          exec:
-            command:
-            - /probe.sh
-          initialDelaySeconds: 15
-          periodSeconds: 5
       volumes:
         - hostPath:
             path: /var/run/docker.sock
