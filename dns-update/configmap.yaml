@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: update-script
+data:
+  update.sh: |-
+    #!/bin/sh
+
+    set -e
+
+    if [ -z ${EMAIL+x} ]; then
+      echo "Please provide EMAIL";
+      exit 1
+    fi
+
+    if [ -z ${API_KEY+x} ]; then
+      echo "Please provide API_KEY";
+      exit 1
+    fi
+
+    if [ -z ${ZONE_ID+x} ]; then
+      echo "Please provide ZONE_ID";
+      exit 1
+    fi
+
+    if [ -z ${RECORD_NAME+x} ]; then
+      echo "Please provide RECORD_NAME";
+      exit 1
+    fi
+
+    echo "[ INFO ] Getting record ID for ${RECORD_NAME}"
+    RECORD_ID=`curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?type=A&name=${RECORD_NAME}" \
+         -H "X-Auth-Email: ${EMAIL}" \
+         -H "X-Auth-Key: ${API_KEY}" \
+         -H "Content-Type: application/json" | jq -r '.result[0].id'`
+    echo "[ INFO ] $RECORD_NAME has ID ${RECORD_ID}"
+
+    echo "[ INFO ] Getting public external IP address"
+    IP_ADDRESS=`curl -s ipinfo.io | jq -r '.ip'`
+    echo "[ INFO ] Public IP adress is ${IP_ADDRESS}"
+
+    echo "[ INFO ] Updating *.home.achntrl.com A record to ${IP_ADDRESS}"
+    RESULT=`curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${RECORD_ID}" \
+         -H "X-Auth-Email: ${EMAIL}" \
+         -H "X-Auth-Key: ${API_KEY}" \
+         -H "Content-Type: application/json" \
+         --data '{"type":"A","name":"'${RECORD_NAME}'","content":"'${IP_ADDRESS}'"}' | jq -r '.success'`
+
+    if [ "${RESULT}" == "true" ]; then
+      echo "[ INFO ] Successfully updated DNS record"
+    else
+      echo "[ INFO ] Failed to update DNS record"
+    fi
+
