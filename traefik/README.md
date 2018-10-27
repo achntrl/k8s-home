@@ -23,3 +23,5 @@ kubectl apply -f traefik-config.yml
 kubectl apply -f traefik-dashboard.yml
 kubectl apply -f traefik-ingress-controller.yml
 ```
+
+[Original source here](https://github.com/evnsio/k8s-home/tree/master/traefik)
