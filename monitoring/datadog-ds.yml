@@ -75,7 +75,10 @@ spec:
             protocol: TCP
         env:
           - name: DD_API_KEY
-            value: <obfuscated>
+            valueFrom:
+              secretKeyRef:
+                name: datadog
+                key: api_key
           - name: KUBERNETES
             value: "true"
           - name: DOCKER_DD_AGENT
