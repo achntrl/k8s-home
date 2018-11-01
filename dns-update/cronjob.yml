@@ -14,27 +14,27 @@ spec:
           containers:
           - name: dns-update
             image: evns/rpi-utilities
-            command: [ "/bin/sh", "-c", "chmod +x /etc/config/update.sh && /etc/config/update.sh" ]
+            command: [ "/bin/sh", "-c", "source /etc/config/update.sh" ]
             env:
             - name: EMAIL
               valueFrom:
                 secretKeyRef:
-                  name: cloudflare
+                  name: dns-update
                   key: email
             - name: RECORD_NAME
               valueFrom:
                 secretKeyRef:
-                  name: cloudflare
+                  name: dns-update
                   key: record_name
             - name: API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: cloudflare
+                  name: dns-update
                   key: api_key
             - name: ZONE_ID
               valueFrom:
                 secretKeyRef:
-                  name: cloudflare
+                  name: dns-update
                   key: zone_id
             volumeMounts:
             - name: config-volume
