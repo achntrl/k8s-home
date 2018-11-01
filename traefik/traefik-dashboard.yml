@@ -21,7 +21,7 @@ metadata:
     ingress.kubernetes.io/auth-secret: "traefik-dashboard-auth"
 spec:
   rules:
-  - host: traefik-dashboard.home.achntrl.com
+  - host: traefik.home.achntrl.com
     http:
       paths:
       - backend:

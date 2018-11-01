@@ -2,7 +2,10 @@ Order
 
 On the slaves:
 
+TODO: Mount the acme.json on NFS volume
+
 ```bash
+mkdir -p ~/k8s-home/traefik
 rm ~/k8s-home/traefik/acme.json
 touch ~/k8s-home/traefik/acme.json
 sudo chmod 600 ~/k8s-home/traefik/acme.json
