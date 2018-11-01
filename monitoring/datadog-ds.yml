@@ -4,6 +4,8 @@ metadata:
   name: datadog-config
 data:
   datadog.yaml: |
+    use_dogstatsd: true
+    dogstatsd_port: 8125
     listeners:
     - name: kubelet
     - name: docker
@@ -14,7 +16,8 @@ data:
   kubelet.yaml: |
     init_config:
     instances:
-    - enable_kubelet_checks: true
+    - cadvisor_metrics_endpoint: http://10.8.0.1:10255/metrics/cadvisor
+      kubelet_metrics_endpoint: http://10.8.0.1:10255/metrics
   apiserver.yaml: |
     init_configs:
     instances:
@@ -35,7 +38,7 @@ data:
   traefik.yaml: |
     init_config:
     instances:
-      - host: "traefik-dashboard.kube-system"
+      - host: "traefik.kube-system"
         port: "8080"
         path: "/health"
   disk.yaml: |
@@ -63,8 +66,8 @@ spec:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
       containers:
-      - image: achntrl/dd-agent:6.5.2v4
-        imagePullPolicy: Always
+      - image: achntrl/datadog-agent:6.6.0-beta
+        # imagePullPolicy: Always
         name: datadog-agent
         ports:
           - containerPort: 8125
@@ -83,18 +86,18 @@ spec:
             value: "true"
           - name: DOCKER_DD_AGENT
             value: "true"
-          - name: DD_COLLECT_KUBERNETES_EVENTS
-            value: "true"
+          # - name: DD_COLLECT_KUBERNETES_EVENTS
+          #   value: "true"
           - name: DD_LEADER_ELECTION
             value: "true"
           - name: DD_LOGS_ENABLED
             value: "true"
           - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
             value: "true"
-          - name: DD_PROCESS_AGENT_ENABLED
-            value: "true"
-          - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
-            value: 'true'
+          # - name: DD_PROCESS_AGENT_ENABLED
+          # #   value: "true"
+          # - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
+          #   value: 'true'
           - name: DD_KUBERNETES_KUBELET_HOST
             valueFrom:
               fieldRef:
