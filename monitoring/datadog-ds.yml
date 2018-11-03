@@ -13,6 +13,8 @@ data:
     - name: kubelet
       polling: true
     leader_election: true
+    process_config:
+      enabled: "disabled"
   kubelet.yaml: |
     init_config:
     instances:
@@ -66,7 +68,7 @@ spec:
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
       containers:
-      - image: achntrl/datadog-agent:6.6.0-beta
+      - image: achntrl/datadog-agent:6.6.0-beta-2
         # imagePullPolicy: Always
         name: datadog-agent
         ports:
@@ -95,7 +97,7 @@ spec:
           - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
             value: "true"
           # - name: DD_PROCESS_AGENT_ENABLED
-          # #   value: "true"
+          #   value: "true"
           # - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
           #   value: 'true'
           - name: DD_KUBERNETES_KUBELET_HOST
@@ -143,9 +145,9 @@ spec:
           - name: datadog-config-volume
             mountPath: /etc/datadog-agent/conf.d/disk.d/conf.yaml
             subPath: disk.yaml
-          - name: passwd
-            mountPath: /etc/passwd
-            readOnly: true
+          # - name: passwd
+          #   mountPath: /etc/passwd
+          #   readOnly: true
       volumes:
         - hostPath:
             path: /var/run/docker.sock
@@ -165,6 +167,6 @@ spec:
         - configMap:
             name: datadog-config
           name: datadog-config-volume
-        - hostPath:
-            path: /etc/passwd
-          name: passwd
+        # - hostPath:
+        #     path: /etc/passwd
+        #   name: passwd
