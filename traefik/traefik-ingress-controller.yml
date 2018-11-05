@@ -37,7 +37,7 @@ spec:
       serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 60
       containers:
-      - image: traefik:v1.4.6
+      - image: traefik:v1.7.4-alpine
         name: traefik-ingress-lb
         env:
           - name: CLOUDFLARE_EMAIL
@@ -53,7 +53,7 @@ spec:
         volumeMounts:
           - mountPath: "/config"
             name: "config"
-          - mountPath: "/etc/traefik/acme.json"
+          - mountPath: "/etc/traefik"
             name: "acme"
         args:
           - --configfile=/config/traefik.toml
@@ -62,9 +62,8 @@ spec:
           configMap:
             name: traefik-config
         - name: acme
-          hostPath:
-            type: FileOrCreate
-            path: /home/pi/k8s-home/traefik/acme.json
+          persistentVolumeClaim:
+              claimName: traefik-acme-pvc
 ---
 kind: Service
 apiVersion: v1

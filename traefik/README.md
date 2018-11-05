@@ -2,7 +2,7 @@ Order
 
 On the slaves:
 
-TODO: Mount the acme.json on NFS volume
+~~TODO: Mount the acme.json on NFS volume~~
 
 ```bash
 mkdir -p ~/k8s-home/traefik
@@ -24,6 +24,8 @@ kubectl apply -f secrets.yml
 kubectl apply -f traefik-rbac.yml
 kubectl apply -f traefik-config.yml
 kubectl apply -f traefik-dashboard.yml
+kubectl apply -f traefik-pv.yml
+kubectl apply -f traefik-pvc.yml
 kubectl apply -f traefik-ingress-controller.yml
 ```
 
