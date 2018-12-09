@@ -4,6 +4,18 @@ metadata:
   name: gogs-ingress
   annotations:
     kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/rate-limit: |+
+      extractorfunc: client.ip
+      rateset:
+        short_term:
+          period: 10s
+          average: 100
+          burst: 500
+        long_term:
+          period: 600s
+          average: 1000
+          burst: 10000
+
 spec:
   rules:
   - host: gogs.home.achntrl.com
