@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: datadog-config
+data:
+  datadog.yaml: |
+    use_dogstatsd: true
+    dogstatsd_port: 8125
+    dogstatsd_non_local_traffic: true
+    listeners:
+    - name: kubelet
+    - name: docker
+    config_providers:
+    - name: kubelet
+      polling: true
+    leader_election: true
+    process_config:
+      enabled: "disabled"
+  kubelet.yaml: |
+    init_config:
+    instances:
+    - cadvisor_metrics_endpoint: http://10.8.0.1:10255/metrics/cadvisor
+      kubelet_metrics_endpoint: http://10.8.0.1:10255/metrics
+  apiserver.yaml: |
+    init_configs:
+    instances:
+    - {}
+  # This doesn't seem to work
+  prometheus.yaml: |
+    init_configs:
+    instances:
+    - prometheus_url: "http://kube-state-metrics.kube-system:8080/metrics"
+      namespace: "kube-system"
+      metrics: ["*"]
+  docker.yaml: |
+    init_config:
+    instances:
+    - url: "unix://var/run/docker.sock"
+      new_tag_names: true
+  # This doesn't seem to work
+  traefik.yaml: |
+    init_config:
+    instances:
+      - host: "traefik.kube-system"
+        port: "8080"
+        path: "/health"
+  disk.yaml: |
+    init_config:
+    instances:
+    - use_mount: false
+      excluded_filesystems:
+        - tmpfs
