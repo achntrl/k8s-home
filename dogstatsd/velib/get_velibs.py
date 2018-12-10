@@ -13,7 +13,7 @@ TRAVERSIERE_ID = "12004"
 STATE_OK = "Operative"
 STATE_KO = "Close"
 HOST = os.getenv("DOGSTATSD_HOST", "192.168.0.100")
-PORT = os.getenv("DOGSTATSD_PORT", 30125)
+PORT = int(os.getenv("DOGSTATSD_PORT", 30125))
 
 
 def get_state(station):
