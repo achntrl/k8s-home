@@ -1,6 +1,6 @@
 FROM python:alpine3.7
 
-RUN pip install requests datadog
+RUN pip install requests datadog apscheduler pytz
 
 COPY get_velibs.py get_velibs.py
 

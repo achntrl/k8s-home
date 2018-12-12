@@ -1,10 +1,11 @@
 import json
 import os
 
+from apscheduler.schedulers.blocking import BlockingScheduler
 from datadog.dogstatsd.base import DogStatsd
 from datadog.api.constants import CheckStatus
-
 import requests
+from pytz import utc
 
 CHARONNE = "charonne"
 CHARONNE_ID = "11004"
@@ -69,4 +70,8 @@ def get_velibs():
         )
 
 
-get_velibs()
+if __name__ == "__main__":
+    sched = BlockingScheduler()
+    sched.configure(timezone=utc)
+    sched.add_job(get_velibs, "cron", second="0")
+    sched.start()
