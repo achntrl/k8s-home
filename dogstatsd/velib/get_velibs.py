@@ -44,12 +44,16 @@ def get_state(station):
     return CheckStatus.WARNING
 
 
-def get_tag(station):
+def get_station_name(station):
     station_id = station["station"]["code"]
     if station_id == CHARONNE_ID:
-        return ["station:" + CHARONNE]
+        return CHARONNE
     if station_id == TRAVERSIERE_ID:
-        return ["station:" + TRAVERSIERE]
+        return TRAVERSIERE
+
+
+def get_tag(station):
+    return ["station:" + get_station_name(station)]
 
 
 def get_velibs():
@@ -79,7 +83,7 @@ def get_velibs():
             "Found {} ebike(s), {} bike(s), {} free dock(s) on {} dock(s). The station is {}".format(
                 ebike_nb, bike_nb, free_dock_nb, dock_nb, station["station"]["state"]
             ),
-            extra={"ddtags": tag[0]},
+            extra={"station": get_station_name(station)},
         )
 
 

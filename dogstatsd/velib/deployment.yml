@@ -11,4 +11,4 @@ spec:
     spec:
       containers:
       - name: get-velib
-        image: achntrl/velib:0.1.2
+        image: achntrl/velib:0.1.3
