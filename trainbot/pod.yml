@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: trainbot
+spec:
+  nodeName: k8s-slave-1 # schedule pod to specific node
+  containers:
+  - name: trainbot
+    image: trainbot:latest
+    imagePullPolicy: Never
