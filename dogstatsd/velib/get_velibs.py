@@ -1,9 +1,11 @@
 import json
+import logging
 import os
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datadog.dogstatsd.base import DogStatsd
 from datadog.api.constants import CheckStatus
+import json_log_formatter
 import requests
 from pytz import utc
 
@@ -15,6 +17,21 @@ STATE_OK = "Operative"
 STATE_KO = "Close"
 HOST = os.getenv("DOGSTATSD_HOST", "192.168.0.100")
 PORT = int(os.getenv("DOGSTATSD_PORT", 30125))
+
+
+class JSONFormatterWithLevel(json_log_formatter.JSONFormatter):
+    def json_record(self, message, extra, record):
+        if "status" not in extra:
+            extra["status"] = record.levelname
+        return super().json_record(message, extra, record)
+
+
+formatter = JSONFormatterWithLevel()
+json_handler = logging.StreamHandler()
+json_handler.setFormatter(formatter)
+logger = logging.getLogger("my_json")
+logger.addHandler(json_handler)
+logger.setLevel(logging.INFO)
 
 
 def get_state(station):
@@ -58,15 +75,11 @@ def get_velibs():
             tags=tag,
             message=station["station"]["state"],
         )
-        print(
-            "{} found {} ebike(s), {} bike(s), {} free dock(s) on {} dock(s). The station is {}".format(
-                tag[0],
-                ebike_nb,
-                bike_nb,
-                free_dock_nb,
-                dock_nb,
-                station["station"]["state"],
-            )
+        logger.info(
+            "Found {} ebike(s), {} bike(s), {} free dock(s) on {} dock(s). The station is {}".format(
+                ebike_nb, bike_nb, free_dock_nb, dock_nb, station["station"]["state"]
+            ),
+            extra={"ddtags": tag[0]},
         )
 
 
