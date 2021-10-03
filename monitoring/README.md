@@ -2,7 +2,8 @@
 
 Deploy the kube-state-metrics folder with `kubectl apply -f kube-state-metrics/`.
 Run `kubectl create configmap datadogtoken --from-literal="event.tokenKey"="0"`
-Then apply `secrets.yml`, `datadog-serviceaccount.yml` and `datadog-ds.yml`
+Then apply `secrets.yml`, `datadog-serviceaccount.yml`, `datadog-service.yml`;
+`datadog-configmap.yml` and `datadog-ds.yml`
 
 ## Building the image
 
